@@ -17,7 +17,6 @@ def _():
     import marimo as mo
     import pandas as pd
     import numpy as np
-
     return mo, np, pd
 
 
