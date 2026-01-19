@@ -32,13 +32,13 @@ def _():
 
         # Injecting an Anomaly at the end (Leak)
         affected_rows = len(df.loc[700:])
-        df.loc[700:, "fuel level"] -= np.arange(affected_rows) * 5 #Fuel
-        df.loc[700:, "pressure"] -= 10 #Pressure
+        df.loc[700:, "fuel level"] -= np.arange(affected_rows) * 5 #Fuel Rapid Drop
+        df.loc[700:, "pressure"] -= 10 #Pressure Drop
 
         return df
 
-    df = generate_sensor_data()
-    return df, mo
+    data = generate_sensor_data()
+    return data, mo
 
 
 @app.cell
@@ -50,16 +50,44 @@ def _(mo):
 
 
 @app.cell
-def _(df):
-    df.describe()
+def _(data):
+    data.describe()
+
     return
 
 
 @app.cell
 def _(mo):
     mo.md(r"""
- 
+    3. Detection Model
     """)
+    return
+
+
+app._unparsable_cell(
+    r"""
+    from scikit-learn.ensemble import IsolationForest
+
+    #Training the model
+    model = IsolationForest(contamination=0.05, random_state=42)
+    features = data[["fuel level", "pressure"]]
+    model.fit(features[:600])  # Training only on normal data
+
+    #Predicting all data (anomalies will be -1)
+    data["anomaly"] = model.predict(features)
+    is_anomaly = data["anomaly"] == -1
+
+    if is_anomaly:
+        alert = mo.Alert()
+
+
+    """,
+    name="_"
+)
+
+
+@app.cell
+def _():
     return
 
 
