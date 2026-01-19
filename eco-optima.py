@@ -38,11 +38,28 @@ def _():
         return df
 
     df = generate_sensor_data()
-    return (mo,)
+    return df, mo
 
 
 @app.cell
-def _():
+def _(mo):
+    mo.md(r"""
+    2. Visualize the Data
+    """)
+    return
+
+
+@app.cell
+def _(df):
+    df.describe()
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+ 
+    """)
     return
 
 
