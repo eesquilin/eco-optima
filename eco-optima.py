@@ -46,7 +46,7 @@ def _():
 @app.cell
 def _(mo):
     mo.md(r"""
-    3. Detection Model
+    2. Detection Model
     """)
     return
 
@@ -65,10 +65,10 @@ def _(data, mo):
     is_anomaly = data["anomaly"] == -1
 
     if is_anomaly is True:
-        alert = mo.callout("Critical Anomaly Detected in Fuel System", type="danger")
+        alert = mo.callout("Critical Anomaly Detected in Fuel System", kind="danger")
 
     else:
-        alert = mo.callout("Fuel System Operating Normally", type="success")
+        alert = mo.callout("Fuel System Operating Normally", kind="success")
 
     alert
     return
@@ -77,8 +77,15 @@ def _(data, mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    4. Agentic Workflow
+    3. Agentic Workflow
     """)
+    return
+
+
+@app.cell
+def _():
+
+
     return
 
 
