@@ -76,7 +76,7 @@ def _(data, mo):
     data["anomaly"] = model.predict(features)
     is_anomaly = data["anomaly"] == -1
 
-    if is_anomaly:
+    if is_anomaly is True in data["anomaly"].values:
         alert = mo.Alert("Critical Anomaly Detected in Fuel System", severity=mo.AlertSeverity.CRITICAL)
 
     else:
