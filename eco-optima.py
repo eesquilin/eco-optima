@@ -52,7 +52,6 @@ def _(mo):
 @app.cell
 def _(data):
     data.describe()
-
     return
 
 
@@ -64,9 +63,9 @@ def _(mo):
     return
 
 
-app._unparsable_cell(
-    r"""
-    from scikit-learn.ensemble import IsolationForest
+@app.cell
+def _(data, mo):
+    from sklearn.ensemble import IsolationForest
 
     #Training the model
     model = IsolationForest(contamination=0.05, random_state=42)
@@ -78,12 +77,13 @@ app._unparsable_cell(
     is_anomaly = data["anomaly"] == -1
 
     if is_anomaly:
-        alert = mo.Alert()
+        alert = mo.Alert("Critical Anomaly Detected in Fuel System", severity=mo.AlertSeverity.CRITICAL)
 
+    else:
+        alert = mo.Alert("Fuel System Operating Normally", severity=mo.AlertSeverity.INFO)
 
-    """,
-    name="_"
-)
+    alert.send()
+    return
 
 
 @app.cell
