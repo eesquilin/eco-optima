@@ -38,21 +38,9 @@ def _():
         return df
 
     data = generate_sensor_data()
+    mo.md("Asset & Compliance Monitoring - Fuel System Anomaly Detection")
+    mo.hstack([mo.ui.table(data.head())])
     return data, mo
-
-
-@app.cell
-def _(mo):
-    mo.md(r"""
-    2. Visualize the Data
-    """)
-    return
-
-
-@app.cell
-def _(data):
-    data.describe()
-    return
 
 
 @app.cell
@@ -76,18 +64,21 @@ def _(data, mo):
     data["anomaly"] = model.predict(features)
     is_anomaly = data["anomaly"] == -1
 
-    if is_anomaly is True in data["anomaly"].values:
-        alert = mo.Alert("Critical Anomaly Detected in Fuel System", severity=mo.AlertSeverity.CRITICAL)
+    if is_anomaly is True:
+        alert = mo.callout("Critical Anomaly Detected in Fuel System", type="danger")
 
     else:
-        alert = mo.Alert("Fuel System Operating Normally", severity=mo.AlertSeverity.INFO)
+        alert = mo.callout("Fuel System Operating Normally", type="success")
 
-    alert.send()
+    alert
     return
 
 
 @app.cell
-def _():
+def _(mo):
+    mo.md(r"""
+    4. Agentic Workflow
+    """)
     return
 
 
