@@ -77,35 +77,13 @@ def _(data, mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    3. Agentic Workflow
+    3.
     """)
     return
 
 
-app._unparsable_cell(
-    """
-    from langchain_google_genai import ChatGoogleGenerativeAI
-    from langchain_core.prompts import ChatPromptTemplate
-    import os
-
-
-    # Loading compliance rules from a text file
-    def get_rules():
-        with open(\"compliance_rules.txt\", \"r\") as file:
-            return rules = file.read()
-    
-    rules_content = get_rules()
-
-    def get_cloud_agent():
-        api_key = os.getenv(\"GOOGLE_API_KEY\")
-        if \"GOOGLE_API_KEY\" not in os.environ:
-            return mo.md(\"Google API Key not found. Please set the GOOGLE_API_KEY environment variable.\")
-        return ChatGoogleGenerativeAI(
-            model=\"gemini-2.5-flash-lite\", 
-            api_key=api_key, 
-            temperature=0)
-
-    llm = get_cloud_agent()   
+@app.cell
+def _(mo, status):
 
     from langchain_google_genai import ChatGoogleGenerativeAI
     import os
@@ -113,25 +91,38 @@ app._unparsable_cell(
 
     # Loading compliance rules from a text file
     def get_rules():
-        with open(\"compliance_rules.txt\", \"r\") as file:
+        with open("compliance_rules.txt", "r") as file:
             rules = file.read()
             return rules
-    
+
     rules_content = get_rules()
 
     def get_cloud_agent():
-        api_key = os.getenv(\"GOOGLE_API_KEY\")
-        if \"GOOGLE_API_KEY\" not in os.environ:
-            return mo.md(\"Google API Key not found. Please set the GOOGLE_API_KEY environment variable.\")
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if "GOOGLE_API_KEY" not in os.environ:
+            return mo.md("Google API Key not found. Please set the GOOGLE_API_KEY environment variable.")
         return ChatGoogleGenerativeAI(
-            model=\"gemini-2.5-flash-lite\", 
+            model="gemini-2.5-flash-lite", 
             api_key=api_key, 
             temperature=0)
 
     llm = get_cloud_agent()   
 
+    if llm: 
+        mo.md("**Eco-Optima Chain Initialized Successfully.**").callout(kind="success")
+    else:
+        mo.md("**Warning:** Google Generative AI LLM not initialized. Please check your API key.").callout(kind="warning")
+
+    status 
+    return llm, rules_content
+
+
+@app.cell
+def _(llm, rules_content):
+    from langchain_core.prompts import ChatPromptTemplate
+
     prompt_template = ChatPromptTemplate.from_messages([
-        (\"system\", f\"\"\"
+        ("system", f"""
         You are the Eco-Optima Compliance Monitoring Agent. 
         Your task is to analyze fuel tank sensor data and identify any anomalies based on the following compliance manual:
         <COMPLIANCE_MANUAL>
@@ -140,20 +131,14 @@ app._unparsable_cell(
 
         If you detect a violation , explain which rule applies and draft a professional 
         maintenance work order. If no violations are found, state 'STATUS: All systems normal'.
-        \"\"\"),
-        (\"user\", \"LATEST SENSOR DATA: {sensor_input}\")
+        """),
+        ("user", "LATEST SENSOR DATA: {sensor_input}")
     ])
 
 
     compliance_chain = prompt_template | llm
 
-    if llm: 
-        mo.md(\"**Eco-Optima Chain Initialized Successfully.**\").callout(kind=\"success\")
-    else:
-        mo.md(\"**Warning:** Google Generative AI LLM not initialized. Please check your API key.\").callout(kind=\"warning\")
-    """,
-    name="_"
-)
+    return
 
 
 if __name__ == "__main__":
