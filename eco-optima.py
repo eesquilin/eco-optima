@@ -71,7 +71,7 @@ def _(data, mo):
         alert = mo.callout("Fuel System Operating Normally", kind="success")
 
     alert
-    return
+    return (is_anomaly,)
 
 
 @app.cell
@@ -134,6 +134,23 @@ def _(llm, rules_content):
 
     compliance_chain = prompt_template | llm
 
+    return (compliance_chain,)
+
+
+@app.cell
+def _(compliance_chain, data, is_anomaly, mo):
+    if is_anomaly.any():
+        anomalies = data[data["anomaly"] == -1].tail(1).to_markdown()
+
+        # Running the compliance check
+        report = compliance_chain.invoke({"sensor_input": anomalies})
+        ui = mo.vstack([
+            mo.md("### Compliance Report"),
+            mo.md(report.content).callout(kind="warning")
+        ])
+    else:
+        ui = mo.md("### Compliance Report").callout(kind="success") + mo.md("STATUS: All systems normal").callout(kind="success")
+    ui
     return
 
 
