@@ -83,30 +83,74 @@ def _(mo):
 
 
 app._unparsable_cell(
-    r"""
+    """
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    from langchain_core.prompts import ChatPromptTemplate
+    import os
+
+
+    # Loading compliance rules from a text file
+    def get_rules():
+        with open(\"compliance_rules.txt\", \"r\") as file:
+            return rules = file.read()
+    
+    rules_content = get_rules()
+
+    def get_cloud_agent():
+        api_key = os.getenv(\"GOOGLE_API_KEY\")
+        if \"GOOGLE_API_KEY\" not in os.environ:
+            return mo.md(\"Google API Key not found. Please set the GOOGLE_API_KEY environment variable.\")
+        return ChatGoogleGenerativeAI(
+            model=\"gemini-2.5-flash-lite\", 
+            api_key=api_key, 
+            temperature=0)
+
+    llm = get_cloud_agent()   
+
     from langchain_google_genai import ChatGoogleGenerativeAI
     import os
 
 
     # Loading compliance rules from a text file
     def get_rules():
-        with open("compliance_rules.txt", "r") as file:
-            return rules = file.read()
+        with open(\"compliance_rules.txt\", \"r\") as file:
+            rules = file.read()
+            return rules
     
     rules_content = get_rules()
 
     def get_cloud_agent():
-        api_key = os.getenv("GOOGLE_API_KEY")
-        if "GOOGLE_API_KEY" not in os.environ:
-            return mo.md("Google API Key not found. Please set the GOOGLE_API_KEY environment variable.")
+        api_key = os.getenv(\"GOOGLE_API_KEY\")
+        if \"GOOGLE_API_KEY\" not in os.environ:
+            return mo.md(\"Google API Key not found. Please set the GOOGLE_API_KEY environment variable.\")
         return ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash-lite", 
+            model=\"gemini-2.5-flash-lite\", 
             api_key=api_key, 
             temperature=0)
 
     llm = get_cloud_agent()   
 
+    prompt_template = ChatPromptTemplate.from_messages([
+        (\"system\", f\"\"\"
+        You are the Eco-Optima Compliance Monitoring Agent. 
+        Your task is to analyze fuel tank sensor data and identify any anomalies based on the following compliance manual:
+        <COMPLIANCE_MANUAL>
+        {rules_content}
+        <COMPLIANCE_MANUAL>
 
+        If you detect a violation , explain which rule applies and draft a professional 
+        maintenance work order. If no violations are found, state 'STATUS: All systems normal'.
+        \"\"\"),
+        (\"user\", \"LATEST SENSOR DATA: {sensor_input}\")
+    ])
+
+
+    compliance_chain = prompt_template | llm
+
+    if llm: 
+        mo.md(\"**Eco-Optima Chain Initialized Successfully.**\").callout(kind=\"success\")
+    else:
+        mo.md(\"**Warning:** Google Generative AI LLM not initialized. Please check your API key.\").callout(kind=\"warning\")
     """,
     name="_"
 )
