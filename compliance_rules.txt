@@ -1,0 +1,7 @@
+EPA COMPLIANCE MANUAL v1.2
+
+CRITICAL VIOLATION (Rule 101): Any fuel level drop > 5% within 1 hour without a concurrent pump-out transaction. Action: Trigger Red Tag protocol; alert State Environmental Agency within 2 hours.
+
+MAINTENANCE ALERT (Rule 102): Pressure drop below 20 PSI or above 45 PSI for more than 30 minutes. Action: Dispatch Level 2 technician for interstitial monitoring check.
+
+SYSTEM WARNING (Rule 103): Sensor temperature variance > 10°F between tank and external ambient. Action: Log as 'Non-Critical Anomaly'; re-inspect within 72 hours.

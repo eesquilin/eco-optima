@@ -82,11 +82,34 @@ def _(mo):
     return
 
 
-@app.cell
-def _():
+app._unparsable_cell(
+    r"""
+    from langchain_google_genai import ChatGoogleGenerativeAI
+    import os
 
 
-    return
+    # Loading compliance rules from a text file
+    def get_rules():
+        with open("compliance_rules.txt", "r") as file:
+            return rules = file.read()
+    
+    rules_content = get_rules()
+
+    def get_cloud_agent():
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if "GOOGLE_API_KEY" not in os.environ:
+            return mo.md("Google API Key not found. Please set the GOOGLE_API_KEY environment variable.")
+        return ChatGoogleGenerativeAI(
+            model="gemini-2.5-flash-lite", 
+            api_key=api_key, 
+            temperature=0)
+
+    llm = get_cloud_agent()   
+
+
+    """,
+    name="_"
+)
 
 
 if __name__ == "__main__":
