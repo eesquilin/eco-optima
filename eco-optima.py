@@ -77,13 +77,13 @@ def _(data, mo):
 @app.cell
 def _(mo):
     mo.md(r"""
-    3.
+    3. Agentic Workflow
     """)
     return
 
 
 @app.cell
-def _(mo, status):
+def _(mo):
 
     from langchain_google_genai import ChatGoogleGenerativeAI
     import os
@@ -106,14 +106,10 @@ def _(mo, status):
             api_key=api_key, 
             temperature=0)
 
-    llm = get_cloud_agent()   
+    llm = get_cloud_agent() 
+    status = mo.md("**Eco-Optima Chain Initialized Successfully.**").callout(kind="success") if llm else mo.md("**Warning:** Google Generative AI LLM not initialized. Please check your API key.").callout(kind="warning")
 
-    if llm: 
-        mo.md("**Eco-Optima Chain Initialized Successfully.**").callout(kind="success")
-    else:
-        mo.md("**Warning:** Google Generative AI LLM not initialized. Please check your API key.").callout(kind="warning")
-
-    status 
+    status
     return llm, rules_content
 
 
