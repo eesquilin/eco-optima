@@ -133,7 +133,6 @@ def _(llm, rules_content):
 
 
     compliance_chain = prompt_template | llm
-
     return (compliance_chain,)
 
 
@@ -144,10 +143,16 @@ def _(compliance_chain, data, is_anomaly, mo):
 
         # Running the compliance check
         report = compliance_chain.invoke({"sensor_input": anomalies})
-        ui = mo.vstack([
-            mo.md("### Compliance Report"),
-            mo.md(report.content).callout(kind="warning")
-        ])
+        if "STATUS: All systems normal" in report.content:
+            ui = mo.vstack([
+                mo.md("### Compliance Report"),
+                mo.md(report.content).callout(kind="success")
+            ])
+        else:
+            ui = mo.vstack([
+                mo.md("### Compliance Report"),
+                mo.md(report.content).callout(kind="warn")
+            ])
     else:
         ui = mo.md("### Compliance Report").callout(kind="success") + mo.md("STATUS: All systems normal").callout(kind="success")
     ui
