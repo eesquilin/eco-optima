@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.19.4"
+__generated_with = "0.19.7"
 app = marimo.App(width="medium")
 
 
@@ -64,7 +64,7 @@ def _(data, mo):
     data["anomaly"] = model.predict(features)
     is_anomaly = data["anomaly"] == -1
 
-    if is_anomaly is True:
+    if is_anomaly.any():
         alert = mo.callout("Critical Anomaly Detected in Fuel System", kind="danger")
 
     else:
@@ -107,7 +107,7 @@ def _(mo):
             temperature=0)
 
     llm = get_cloud_agent() 
-    status = mo.md("**Eco-Optima Chain Initialized Successfully.**").callout(kind="success") if llm else mo.md("**Warning:** Google Generative AI LLM not initialized. Please check your API key.").callout(kind="warning")
+    status = mo.md("**Eco-Optima Chain Initialized Successfully.**").callout(kind="success") if llm else mo.md("**Warning:** Google Generative AI LLM not initialized. Please check your API key.").callout(kind="warn")
 
     status
     return llm, rules_content
@@ -154,7 +154,7 @@ def _(compliance_chain, data, is_anomaly, mo):
                 mo.md(report.content).callout(kind="warn")
             ])
     else:
-        ui = mo.md("### Compliance Report").callout(kind="success") + mo.md("STATUS: All systems normal").callout(kind="success")
+        ui = mo.md("### Compliance Report").callout(kind="success") +mo.md("STATUS: All systems normal").callout(kind="success")
     ui
     return
 
