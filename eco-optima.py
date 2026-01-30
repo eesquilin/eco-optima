@@ -154,7 +154,11 @@ def _(compliance_chain, data, is_anomaly, mo):
                 mo.md(report.content).callout(kind="warn")
             ])
     else:
-        ui = mo.md("### Compliance Report").callout(kind="success") +mo.md("STATUS: All systems normal").callout(kind="success")
+        #ui = mo.md("### Compliance Report").callout(kind="success") +mo.md("STATUS: All systems normal").callout(kind="success")
+        ui = mo.vstack([
+            mo.md("### Compliance Report"),
+            mo.md("STATUS: All systems normal").callout(kind="success")
+        ])
     ui
     return
 
