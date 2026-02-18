@@ -1,1 +1,5 @@
 .vscode/settings.json
+
+# Ignore raw data files
+data/*.txt
+data/*.csv
